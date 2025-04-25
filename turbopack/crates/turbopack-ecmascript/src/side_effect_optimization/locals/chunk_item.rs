@@ -54,7 +54,7 @@ impl EcmascriptChunkItem for EcmascriptModuleLocalsChunkItem {
             .reference_module_source_maps(*ResolvedVc::upcast(self.module))
             .await?;
 
-        let unused_export_removal = original_module.options().await?.unused_export_removal;
+        let remove_unused_exports = original_module.options().await?.remove_unused_exports;
 
         let content = EcmascriptModuleContent::new(EcmascriptModuleContentOptions {
             module: ResolvedVc::upcast(self.module),
@@ -71,7 +71,7 @@ impl EcmascriptChunkItem for EcmascriptModuleLocalsChunkItem {
             original_source_map: analyze_result.source_map,
             exports,
             async_module_info,
-            unused_export_removal,
+            remove_unused_exports,
         });
 
         Ok(EcmascriptChunkItemContent::new(

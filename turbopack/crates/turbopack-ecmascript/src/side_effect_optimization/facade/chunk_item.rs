@@ -85,7 +85,7 @@ impl EcmascriptChunkItem for EcmascriptModuleFacadeChunkItem {
                     *chunking_context,
                     ResolvedVc::upcast(self.module),
                     None,
-                    self.module.options().await?.unused_export_removal,
+                    self.module.options().await?.remove_unused_exports,
                 )
                 .await?,
         ];
