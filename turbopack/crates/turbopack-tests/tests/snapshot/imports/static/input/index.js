@@ -1,2 +1,2 @@
-import img from "./vercel.svg";
-console.log(img);
+import img from './vercel.svg'
+console.log(img)
