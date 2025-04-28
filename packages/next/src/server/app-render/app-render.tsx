@@ -1029,7 +1029,6 @@ function App<T>({
   preinitScripts,
   clientReferenceManifest,
   ServerInsertedHTMLProvider,
-  ServerInsertedMetadataProvider,
   gracefullyDegrade,
   nonce,
 }: {
@@ -1037,7 +1036,6 @@ function App<T>({
   preinitScripts: () => void
   clientReferenceManifest: NonNullable<RenderOpts['clientReferenceManifest']>
   ServerInsertedHTMLProvider: React.ComponentType<{ children: JSX.Element }>
-  ServerInsertedMetadataProvider: React.ComponentType<{ children: JSX.Element }>
   gracefullyDegrade: boolean
   nonce?: string
 }): JSX.Element {
@@ -1077,16 +1075,14 @@ function App<T>({
         nonce,
       }}
     >
-      <ServerInsertedMetadataProvider>
-        <ServerInsertedHTMLProvider>
-          <AppRouter
-            actionQueue={actionQueue}
-            globalErrorComponentAndStyles={response.G}
-            assetPrefix={response.p}
-            gracefullyDegrade={gracefullyDegrade}
-          />
-        </ServerInsertedHTMLProvider>
-      </ServerInsertedMetadataProvider>
+      <ServerInsertedHTMLProvider>
+        <AppRouter
+          actionQueue={actionQueue}
+          globalErrorComponentAndStyles={response.G}
+          assetPrefix={response.p}
+          gracefullyDegrade={gracefullyDegrade}
+        />
+      </ServerInsertedHTMLProvider>
     </HeadManagerContext.Provider>
   )
 }
@@ -1098,7 +1094,6 @@ function ErrorApp<T>({
   reactServerStream,
   preinitScripts,
   clientReferenceManifest,
-  ServerInsertedMetadataProvider,
   ServerInsertedHTMLProvider,
   gracefullyDegrade,
   nonce,
@@ -1106,7 +1101,6 @@ function ErrorApp<T>({
   reactServerStream: BinaryStreamOf<T>
   preinitScripts: () => void
   clientReferenceManifest: NonNullable<RenderOpts['clientReferenceManifest']>
-  ServerInsertedMetadataProvider: React.ComponentType<{ children: JSX.Element }>
   ServerInsertedHTMLProvider: React.ComponentType<{ children: JSX.Element }>
   gracefullyDegrade: boolean
   nonce?: string
@@ -1138,16 +1132,14 @@ function ErrorApp<T>({
   const actionQueue = createMutableActionQueue(initialState, null)
 
   return (
-    <ServerInsertedMetadataProvider>
-      <ServerInsertedHTMLProvider>
-        <AppRouter
-          actionQueue={actionQueue}
-          globalErrorComponentAndStyles={response.G}
-          assetPrefix={response.p}
-          gracefullyDegrade={gracefullyDegrade}
-        />
-      </ServerInsertedHTMLProvider>
-    </ServerInsertedMetadataProvider>
+    <ServerInsertedHTMLProvider>
+      <AppRouter
+        actionQueue={actionQueue}
+        globalErrorComponentAndStyles={response.G}
+        assetPrefix={response.p}
+        gracefullyDegrade={gracefullyDegrade}
+      />
+    </ServerInsertedHTMLProvider>
   )
 }
 
@@ -1718,8 +1710,7 @@ async function renderToStream(
 
   const { ServerInsertedHTMLProvider, renderServerInsertedHTML } =
     createServerInsertedHTML()
-  const { ServerInsertedMetadataProvider, getServerInsertedMetadata } =
-    createServerInsertedMetadata(ctx.nonce)
+  const { getServerInsertedMetadata } = createServerInsertedMetadata(ctx.nonce)
 
   const tracingMetadata = getTracedMetadata(
     getTracer().getTracePropagationData(),
@@ -1917,7 +1908,6 @@ async function renderToStream(
             preinitScripts={preinitScripts}
             clientReferenceManifest={clientReferenceManifest}
             ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-            ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
             nonce={ctx.nonce}
             gracefullyDegrade={!!ctx.renderOpts.botType}
           />,
@@ -1959,7 +1949,6 @@ async function renderToStream(
         preinitScripts={preinitScripts}
         clientReferenceManifest={clientReferenceManifest}
         ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-        ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
         gracefullyDegrade={!!ctx.renderOpts.botType}
         nonce={ctx.nonce}
       />,
@@ -2115,7 +2104,6 @@ async function renderToStream(
           element: (
             <ErrorApp
               reactServerStream={errorServerStream}
-              ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
               ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
               preinitScripts={errorPreinitScripts}
               clientReferenceManifest={clientReferenceManifest}
@@ -2322,7 +2310,6 @@ async function spawnDynamicValidationInDev(
 
   const nonce = '1'
   const { ServerInsertedHTMLProvider } = createServerInsertedHTML()
-  const { ServerInsertedMetadataProvider } = createServerInsertedMetadata(nonce)
 
   if (initialServerStream) {
     const [warmupStream, renderStream] = initialServerStream.tee()
@@ -2341,7 +2328,6 @@ async function spawnDynamicValidationInDev(
         preinitScripts={() => {}}
         clientReferenceManifest={clientReferenceManifest}
         ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-        ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
         gracefullyDegrade={!!ctx.renderOpts.botType}
         nonce={nonce}
       />,
@@ -2488,7 +2474,6 @@ async function spawnDynamicValidationInDev(
             preinitScripts={() => {}}
             clientReferenceManifest={clientReferenceManifest}
             ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-            ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
             gracefullyDegrade={!!ctx.renderOpts.botType}
             nonce={ctx.nonce}
           />,
@@ -2620,8 +2605,7 @@ async function prerenderToStream(
 
   const { ServerInsertedHTMLProvider, renderServerInsertedHTML } =
     createServerInsertedHTML()
-  const { ServerInsertedMetadataProvider, getServerInsertedMetadata } =
-    createServerInsertedMetadata(nonce)
+  const { getServerInsertedMetadata } = createServerInsertedMetadata(nonce)
 
   const tracingMetadata = getTracedMetadata(
     getTracer().getTracePropagationData(),
@@ -2880,9 +2864,6 @@ async function prerenderToStream(
                   preinitScripts={preinitScripts}
                   clientReferenceManifest={clientReferenceManifest}
                   ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-                  ServerInsertedMetadataProvider={
-                    ServerInsertedMetadataProvider
-                  }
                   gracefullyDegrade={!!ctx.renderOpts.botType}
                   nonce={nonce}
                 />,
@@ -3042,9 +3023,6 @@ async function prerenderToStream(
                   preinitScripts={preinitScripts}
                   clientReferenceManifest={clientReferenceManifest}
                   ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-                  ServerInsertedMetadataProvider={
-                    ServerInsertedMetadataProvider
-                  }
                   gracefullyDegrade={!!ctx.renderOpts.botType}
                   nonce={nonce}
                 />,
@@ -3177,7 +3155,6 @@ async function prerenderToStream(
                 preinitScripts={() => {}}
                 clientReferenceManifest={clientReferenceManifest}
                 ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-                ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
                 gracefullyDegrade={!!ctx.renderOpts.botType}
                 nonce={nonce}
               />,
@@ -3369,7 +3346,6 @@ async function prerenderToStream(
               preinitScripts={preinitScripts}
               clientReferenceManifest={clientReferenceManifest}
               ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-              ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
               gracefullyDegrade={!!ctx.renderOpts.botType}
               nonce={nonce}
             />,
@@ -3523,9 +3499,6 @@ async function prerenderToStream(
                   preinitScripts={preinitScripts}
                   clientReferenceManifest={clientReferenceManifest}
                   ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-                  ServerInsertedMetadataProvider={
-                    ServerInsertedMetadataProvider
-                  }
                   gracefullyDegrade={!!ctx.renderOpts.botType}
                   nonce={nonce}
                 />,
@@ -3713,7 +3686,6 @@ async function prerenderToStream(
           preinitScripts={preinitScripts}
           clientReferenceManifest={clientReferenceManifest}
           ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-          ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
           gracefullyDegrade={!!ctx.renderOpts.botType}
           nonce={nonce}
         />,
@@ -3846,7 +3818,6 @@ async function prerenderToStream(
               preinitScripts={() => {}}
               clientReferenceManifest={clientReferenceManifest}
               ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-              ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
               gracefullyDegrade={!!ctx.renderOpts.botType}
               nonce={nonce}
             />,
@@ -3926,7 +3897,6 @@ async function prerenderToStream(
           preinitScripts={preinitScripts}
           clientReferenceManifest={clientReferenceManifest}
           ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
-          ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
           gracefullyDegrade={!!ctx.renderOpts.botType}
           nonce={nonce}
         />,
@@ -4089,7 +4059,6 @@ async function prerenderToStream(
         element: (
           <ErrorApp
             reactServerStream={errorServerStream}
-            ServerInsertedMetadataProvider={ServerInsertedMetadataProvider}
             ServerInsertedHTMLProvider={ServerInsertedHTMLProvider}
             preinitScripts={errorPreinitScripts}
             clientReferenceManifest={clientReferenceManifest}
